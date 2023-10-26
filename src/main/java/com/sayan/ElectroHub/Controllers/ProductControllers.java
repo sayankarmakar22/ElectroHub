@@ -87,4 +87,18 @@ public class ProductControllers {
         }
     }
 
+    @GetMapping("/getAllProduct")
+    public ResponseEntity<List<Product>> getAllProduct(){
+        return new ResponseEntity<>(productServices.getAllProduct(),HttpStatus.FOUND);
+    }
+
+    @GetMapping("/search/{keyword}")
+    public ResponseEntity<List<Product>> getAllProduct(@PathVariable String keyword){
+        return new ResponseEntity<>(productServices.searchProduct(keyword), HttpStatus.CREATED);
+    }
+    @GetMapping("/filter/{startPrice}/{endPrice}")
+    public ResponseEntity<List<Product>> getAllProduct(@PathVariable long startPrice,@PathVariable long endPrice){
+        return new ResponseEntity<>(productServices.filterProduct(startPrice,endPrice),HttpStatus.FOUND);
+    }
+
 }

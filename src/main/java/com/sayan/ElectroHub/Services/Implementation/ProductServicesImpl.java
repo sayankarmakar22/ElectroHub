@@ -10,6 +10,8 @@ import com.sayan.ElectroHub.Services.ProductServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ProductServicesImpl implements ProductServices {
     @Autowired
@@ -47,5 +49,20 @@ public class ProductServicesImpl implements ProductServices {
         throw new RuntimeException("error while deleting product");
 
 
+    }
+
+    @Override
+    public List<Product> getAllProduct() {
+        return productRepo.findAll();
+    }
+
+    @Override
+    public List<Product> searchProduct(String keyword) {
+        return productRepo.findByproductNameContaining(keyword);
+    }
+
+    @Override
+    public List<Product> filterProduct(long startPrice, long endPrice) {
+        return productRepo.findByPriceBetween(startPrice,endPrice);
     }
 }
