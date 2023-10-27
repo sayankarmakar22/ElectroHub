@@ -12,7 +12,7 @@ public interface ProductServices {
     Object viewProduct(String productId) ;
     String deleteProduct(String productId) throws Exception;
 
-    List<Object> getAllProduct();
+    List<Product> getAllProduct();
 
     List<Object> searchProduct(String keyword);
 

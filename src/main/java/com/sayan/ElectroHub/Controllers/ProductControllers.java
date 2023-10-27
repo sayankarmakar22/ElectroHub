@@ -88,7 +88,7 @@ public class ProductControllers {
     }
 
     @GetMapping("/getAllProduct")
-    public ResponseEntity<List<Object>> getAllProduct(){
+    public ResponseEntity<List<Product>> getAllProduct(){
         return new ResponseEntity<>(productServices.getAllProduct(),HttpStatus.FOUND);
     }
 

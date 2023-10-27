@@ -24,6 +24,7 @@ public class ProductServicesImpl implements ProductServices {
     private ProductRepo productRepo;
 
     private final static String hashKey = "product";
+    private final static String hashKeyForAllProduct = "allProduct";
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -78,25 +79,8 @@ public class ProductServicesImpl implements ProductServices {
     }
 
     @Override
-    public List<Object> getAllProduct() {
-        List<Product> all = productRepo.findAll();
-        if(requestTime == 0){
-            requestTime = 1;
-            log.info("requestTime = " + requestTime);
-            return Collections.singletonList(all);
-        }
-        else if(requestTime == 1){
-            log.info("requestTime = " +requestTime);
-                redisTemplate.opsForHash().put(hashKey,"allProducts",all);
-            return (List<Object>) redisTemplate.opsForHash().get(hashKey,"allProducts");
-        }
-        return (List<Object>) redisTemplate.opsForHash().get(hashKey,"allProducts");
-    }
-    @Scheduled(fixedRate = 30000)
-    private void DeleteAllSavedProductRedis(){
-        Set keys = redisTemplate.opsForHash().keys(hashKey);
-        redisTemplate.opsForHash().delete(hashKey,keys);
-        log.info("cleared");
+    public List<Product> getAllProduct() {
+       return productRepo.findAll();
     }
 
 
