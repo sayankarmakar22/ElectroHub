@@ -12,9 +12,9 @@ public interface ProductServices {
     Object viewProduct(String productId) ;
     String deleteProduct(String productId) throws Exception;
 
-    List<Product> getAllProduct();
+    List<Object> getAllProduct();
 
-    List<Product> searchProduct(String keyword);
+    List<Object> searchProduct(String keyword);
 
-    List<Product> filterProduct(long startPrice,long endPrice);
+    List<Object> filterProduct(long startPrice,long endPrice);
 }

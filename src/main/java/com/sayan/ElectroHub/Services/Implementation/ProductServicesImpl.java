@@ -9,11 +9,14 @@ import com.sayan.ElectroHub.Model.Product;
 import com.sayan.ElectroHub.Redis.Model.RedisProduct;
 import com.sayan.ElectroHub.Repository.ProductRepo;
 import com.sayan.ElectroHub.Services.ProductServices;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class ProductServicesImpl implements ProductServices {
@@ -24,6 +27,10 @@ public class ProductServicesImpl implements ProductServices {
 
     @Autowired
     private RedisTemplate redisTemplate;
+
+    private int requestTime = 0;
+
+    private Logger log = LoggerFactory.getLogger(ProductServicesImpl.class);
 
 
     @Override
@@ -71,17 +78,49 @@ public class ProductServicesImpl implements ProductServices {
     }
 
     @Override
-    public List<Product> getAllProduct() {
-        return productRepo.findAll();
+    public List<Object> getAllProduct() {
+        List<Product> all = productRepo.findAll();
+        if(requestTime == 0){
+            requestTime = 1;
+            log.info("requestTime = " + requestTime);
+            return Collections.singletonList(all);
+        }
+        else if(requestTime == 1){
+            log.info("requestTime = " +requestTime);
+                redisTemplate.opsForHash().put(hashKey,"allProducts",all);
+            return (List<Object>) redisTemplate.opsForHash().get(hashKey,"allProducts");
+        }
+        return (List<Object>) redisTemplate.opsForHash().get(hashKey,"allProducts");
+    }
+    @Scheduled(fixedRate = 30000)
+    private void DeleteAllSavedProductRedis(){
+        Set keys = redisTemplate.opsForHash().keys(hashKey);
+        redisTemplate.opsForHash().delete(hashKey,keys);
+        log.info("cleared");
+    }
+
+
+
+    @Override
+    public List<Object> searchProduct(String keyword) {
+        Object foundFromRedisSearchedProduct = redisTemplate.opsForHash().get(hashKey, keyword);
+        if(foundFromRedisSearchedProduct == null){
+            List<Product> searchedProduct = productRepo.findByproductNameContaining(keyword);
+            redisTemplate.opsForHash(). put(hashKey,keyword,searchedProduct);
+            return Arrays.asList(searchedProduct.toArray());
+        }
+        return (List<Object>) foundFromRedisSearchedProduct;
     }
 
     @Override
-    public List<Product> searchProduct(String keyword) {
-        return productRepo.findByproductNameContaining(keyword);
-    }
-
-    @Override
-    public List<Product> filterProduct(long startPrice, long endPrice) {
-        return productRepo.findByPriceBetween(startPrice,endPrice);
+    public List<Object> filterProduct(long startPrice, long endPrice) {
+        String keyForRedis = "filter " + String.valueOf(startPrice) + String.valueOf(endPrice);
+        Object foundFromRedisFilterProduct = redisTemplate.opsForHash().get(hashKey, keyForRedis);
+        if(foundFromRedisFilterProduct == null){
+            List<Product> filteredProduct = productRepo.findByPriceBetween(startPrice, endPrice);
+            redisTemplate.opsForHash(). put(hashKey,keyForRedis,filteredProduct);
+            return Arrays.asList(filteredProduct.toArray());
+        }
+        return (List<Object>) foundFromRedisFilterProduct;
     }
 }
