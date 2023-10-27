@@ -24,7 +24,8 @@ public class ProductServicesImpl implements ProductServices {
     private ProductRepo productRepo;
 
     private final static String hashKey = "product";
-    private final static String hashKeyForAllProduct = "allProduct";
+    private final static String hashKeyForSaving = "productSaving";
+
 
     @Autowired
     private RedisTemplate redisTemplate;
@@ -37,7 +38,7 @@ public class ProductServicesImpl implements ProductServices {
     @Override
     public Product saveProduct(ProductRequest product) throws Exception {
         Product savedProduct = ProductHelper.convertSavedProductToProduct(product,new Product());
-        redisTemplate.opsForHash().put(hashKey,savedProduct.getProductId(), RedisProductHelper.convertToRedisProduct(savedProduct,new RedisProduct()));
+        redisTemplate.opsForHash().put(hashKeyForSaving,savedProduct.getProductId(), RedisProductHelper.convertToRedisProduct(savedProduct,new RedisProduct()));
         return productRepo.save(savedProduct);
     }
 
@@ -80,7 +81,7 @@ public class ProductServicesImpl implements ProductServices {
 
     @Override
     public List<Product> getAllProduct() {
-       return productRepo.findAll();
+       return redisTemplate.opsForHash().values(hashKeyForSaving);
     }
 
 
