@@ -1,9 +1,6 @@
 package com.sayan.ElectroHub.Model;
 
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,7 +13,7 @@ import java.util.Date;
 @Entity
 public class Customer {
     @Id
-    private String CustomerName;
+    private String CustomerId;
 
     private String name;
     @Column(length = 500)
@@ -30,4 +27,11 @@ public class Customer {
     private Date registrationDateTime;
 
     private String email;
+
+    @OneToOne(mappedBy = "customerId")
+    private Cart cart;
+
+    @OneToOne(mappedBy = "customerId")
+    private OrderList orderList;
+
 }
