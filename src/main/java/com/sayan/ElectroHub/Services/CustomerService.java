@@ -7,4 +7,6 @@ public interface CustomerService {
     Object viewCust(String custId);
     Object updateCust(CustomerRequest customerRequest);
     String deleteCust(String custId);
+
+    String checkCustomerId(String id);
 }

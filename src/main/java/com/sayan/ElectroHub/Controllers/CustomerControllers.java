@@ -83,4 +83,10 @@ public class CustomerControllers {
             return new ResponseEntity<>(MappingResponse.mapUniversalResponse("Error while deleting customer",response), HttpStatus.CREATED);
         }
     }
+
+    @GetMapping("/check-customerId/{id}")
+    public ResponseEntity<String> checkCustomerId(@PathVariable String id){
+        return new ResponseEntity<>(customerService.checkCustomerId(id),HttpStatus.OK);
+    }
+
 }

@@ -44,4 +44,10 @@ public class CustomerServiceImpl implements CustomerService {
         customerRepo.deleteById(custId);
         return "deleted id : " + custId;
     }
+
+    @Override
+    public String checkCustomerId(String id) {
+         String result = customerRepo.existsById(id) ? "Customer Id Not Available" : "Customer Id Available";
+         return result;
+    }
 }
