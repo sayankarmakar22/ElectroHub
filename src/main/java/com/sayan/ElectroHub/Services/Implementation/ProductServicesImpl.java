@@ -48,15 +48,15 @@ public class ProductServicesImpl implements ProductServices {
 
     @Override
     public Product updateProduct(ProductUpdate product) throws Exception {
+        if(!productRepo.existsByproductId(product.getProductId())){
+            throw new RuntimeException();
+        }
         Product savedProduct = ProductHelper.convertSavedProductToProductUpdate(product, productRepo.findByproductId(product.getProductId()));
         redisTemplate.opsForHash().put(hashKeyForSaving,savedProduct.getProductId(),RedisProductHelper.convertToRedisProduct(savedProduct,new RedisProduct()));
         log.info("updated product id " + product.getProductId() + " to the redis server");
-        if(productRepo.existsByproductId(product.getProductId())){
-            productRepo.save(savedProduct);
-            log.info("updated product id " + product.getProductId() + " to the sql server");
-            return productRepo.findByproductId(product.getProductId());
-        }
-        throw new RuntimeException("error while updating product");
+        Product savedProductToDb = productRepo.save(savedProduct);
+        log.info("updated product id " + product.getProductId() + " to the sql server");
+            return savedProductToDb;
     }
 
     @Override
