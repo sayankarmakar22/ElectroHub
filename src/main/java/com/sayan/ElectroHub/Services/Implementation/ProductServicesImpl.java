@@ -37,6 +37,7 @@ public class ProductServicesImpl implements ProductServices {
     private Logger log = LoggerFactory.getLogger(ProductServicesImpl.class);
 
 
+
     @Override
     public Product saveProduct(ProductRequest product) throws Exception {
         Product savedProduct = ProductHelper.convertSavedProductToProduct(product,new Product());
@@ -94,6 +95,17 @@ public class ProductServicesImpl implements ProductServices {
     }
 
 
+    @Scheduled(fixedRate = 1000 * 60 * 60)
+    public void deletedItemsInRedis(){
+       redisTemplate.opsForHash().keys(hashKeyForSearched).forEach(key ->{
+            redisTemplate.opsForHash().delete(hashKeyForSearched,key);
+        });
+        log.info("deleted searched keywords");
+        redisTemplate.opsForHash().keys(hashKeyForFilter).forEach(key ->{
+            redisTemplate.opsForHash().delete(hashKeyForFilter,key);
+        });
+        log.info("deleted filtered products");
+    }
 
     @Override
     public List<Object> searchProduct(String keyword) {
