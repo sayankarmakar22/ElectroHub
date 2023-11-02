@@ -4,3 +4,12 @@ customer found from redis
 updated customer saved to redis 
 
 updated customer saved to sql 
+
+saved customer to the redis
+saved customer to the redis
+saved customer to the redis
+saved customer to the redis
+saved customer to the redis
+saved customer to the redis
+saved customer to the redis
+saved customer to the redis

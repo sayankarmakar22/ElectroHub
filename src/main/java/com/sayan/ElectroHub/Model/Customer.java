@@ -32,6 +32,6 @@ public class Customer {
     private Cart cart;
 
     @OneToOne(mappedBy = "customerId")
-    private OrderList orderList;
+    private Orders orders;
 
 }

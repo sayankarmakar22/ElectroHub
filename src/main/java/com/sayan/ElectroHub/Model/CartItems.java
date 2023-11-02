@@ -9,18 +9,15 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class ProductList {
+public class CartItems {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
 
-    private String type;
-
+    private int quantity;
     @ManyToOne
     @JoinColumn(name = "cartId")
     private Cart cartId;
 
-    @OneToOne
-    @JoinColumn(name = "productId")
-    private Product productId;
+    private String productId;
 }
